@@ -1,7 +1,21 @@
 <template>
   <div class="home">
     <h1>All Contacts</h1>
-    <div <div v-for="contact in contacts">
+    <!-- New/Create Action -->
+    <div>
+     <p>First Name: <input type ="text" v-model="newContactFirstName"></p> 
+     <p>Middle Name: <input type ="text" v-model="newContactMiddleName"></p> 
+     <p>Last Name: <input type ="text" v-model="newContactLastName"></p> 
+     <p>Email: <input type ="text" v-model="newContactEmail"></p> 
+     <p>Phone Number: <input type ="text" v-model="newContactPhoneNumber"></p> 
+     <p>BIO: <input type ="text" v-model="newContactBIO"></p> 
+     <button v-on:click="createContact()">Create Contact</button>
+     <hr>
+    </div>
+
+
+    <!-- Index Action-->
+    <div v-for="contact in contacts">
       <p>{{ contact.name }}</p>
       <p>{{ contact.email }}</p>
       <p>{{ contact.phone_number }}</p>
@@ -20,7 +34,13 @@ import axios from "axios";
 export default {
   data: function() {
     return {
-      contacts: []
+      contacts: [],
+      newContactFirstName: "",
+      newContactMiddleName: "",
+      newContactLastName: "",
+      newContactEmail: "",
+      newContactPhoneNumber: "",
+      newContactBIO: ""
     };
   },
   created: function() {
@@ -28,7 +48,22 @@ export default {
       this.contacts = response.data;
     });
   },
-  methods: {}
+  methods: {
+    createContact: function() {
+      var params = {
+        first_name: this.newContactFirstName,
+        middle_name: this.newContactMiddleName,
+        last_name: this.newContactLastName,
+        email: this.newContactEmail,
+        phone_number: this.newContactPhoneNumber,
+        bio: this.newContactBIO
+      }
+      axios.post("/api/contacts", params).then(response => {
+        console.log(response);
+        this.contacts.push(response.data);
+      });
+    }
+  }
 };
 </script>
 
