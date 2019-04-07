@@ -3,12 +3,12 @@
     <h1>All Contacts</h1>
     <!-- New/Create Action -->
     <div>
-     <p>First Name: <input type ="text" v-model="newContactFirstName"></p> 
-     <p>Middle Name: <input type ="text" v-model="newContactMiddleName"></p> 
-     <p>Last Name: <input type ="text" v-model="newContactLastName"></p> 
-     <p>Email: <input type ="text" v-model="newContactEmail"></p> 
-     <p>Phone Number: <input type ="text" v-model="newContactPhoneNumber"></p> 
-     <p>BIO: <input type ="text" v-model="newContactBIO"></p> 
+     <p>First Name: <input type ="text" v-model="newContact.firstName"></p> 
+     <p>Middle Name: <input type ="text" v-model="newContact.middleName"></p> 
+     <p>Last Name: <input type ="text" v-model="newContact.lastName"></p> 
+     <p>Email: <input type ="text" v-model="newContact.email"></p> 
+     <p>Phone Number: <input type ="text" v-model="newContact.phoneNumber"></p> 
+     <p>BIO: <input type ="text" v-model="newContact.bio"></p> 
      <button v-on:click="createContact()">Create Contact</button>
      <hr>
     </div>
@@ -27,11 +27,11 @@
         <p>{{ contact.bio}}</p>
       <!-- end of more info -->
       <!-- edit contact -->
-        <p>First Name: <input type ="text" v-model="contact.first_name"></p> 
-        <p>Middle Name: <input type ="text" v-model="contact.middle_name"></p> 
-        <p>Last Name: <input type ="text" v-model="contact.last_name"></p> 
+        <p>First Name: <input type ="text" v-model="contact.firstName"></p> 
+        <p>Middle Name: <input type ="text" v-model="contact.middleName"></p> 
+        <p>Last Name: <input type ="text" v-model="contact.lastName"></p> 
         <p>Email: <input type ="text" v-model="contact.email"></p> 
-        <p>Phone Number: <input type ="text" v-model="contact.phone_number"></p> 
+        <p>Phone Number: <input type ="text" v-model="contact.phoneNumber"></p> 
         <p>BIO: <input type ="text" v-model="contact.bio"></p>
         <button v-on:click="updateContact(contact)">Update Contact</button>
         <button v-on:click="deleteContact(contact)">Delete Contact</button> 
@@ -52,63 +52,66 @@ export default {
   data: function() {
     return {
       contacts: [],
-      newContactFirstName: "",
-      newContactMiddleName: "",
-      newContactLastName: "",
-      newContactEmail: "",
-      newContactPhoneNumber: "",
-      newContactBIO: "",
+      newContact: {
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+        bio: ""
+      },
       currentContact: {}
     };
   },
   created: function() {
-    axios.get("/api/contacts").then(response => {
+   axios.get("/api/contacts").then(response => {
+      console.log(response);
       this.contacts = response.data;
     });
   },
   methods: {
     createContact: function() {
       var params = {
-        first_name: this.newContactFirstName,
-        middle_name: this.newContactMiddleName,
-        last_name: this.newContactLastName,
-        email: this.newContactEmail,
-        phone_number: this.newContactPhoneNumber,
-        bio: this.newContactBIO
+        first_name: this.newContact.firstName,
+        middle_name: this.newContact.middleName,
+        last_name: this.newContact.lastName,
+        email: this.newContact.email,
+        phone_number: this.newContact.phoneNumber,
+        bio: this.newContact.bio
       }
       axios.post("/api/contacts", params).then(response => {
         console.log(response);
         this.contacts.push(response.data);
       });
     },
-    toggleContact: function (theContact) {
-      if (this.currentContact === theContact) {
+    toggleContact: function (contact) {
+      if (this.currentContact === contact) {
         this.currentContact = {};
       }
       else {
-        this.currentContact = theContact;
+        this.currentContact = contact;
       }
     },
-    updateContact: function(theContact) {
+    updateContact: function(contact) {
       var params = {
-        first_name: theContact.first_name,
-        middle_name: theContact.middle_name,
-        last_name: theContact.last_name,
-        email: theContact.email,     
-        phone_number: theContact.phone_number,
-        bio: theContact.bio
+        first_name: contact.firstName,
+        middle_name: contact.middleName,
+        last_name: contact.lastName,
+        email: contact.email,     
+        phone_number: contact.phoneNumber,
+        bio: contact.bio
       };
-      axios.patch("/api/contacts/" + theContact.id, params).then(response => {
+      axios.patch("/api/contacts/" + contact.id, params).then(response => {
       console.log(response);
-      theContact = response.data;
-      })
+      contact = response.data;
+      });
     } ,
-    deleteContact: function(theContact) {
-      axios.delete("/api/contacts/" + theContact.id).then(response => {
+    deleteContact: function(contact) {
+      axios.delete("/api/contacts/" + contact.id).then(response => {
         console.log("Deleting Contact");
         console.log(response);
         console.log("contact deleted")
-        var index = this.contacts.indexOf(theContact);
+        var index = this.contacts.indexOf(contact);
         this.contacts.splice(index, 1);
       })
     }
