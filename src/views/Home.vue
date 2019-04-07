@@ -97,15 +97,17 @@ export default {
         email: theContact.email,     
         phone_number: theContact.phone_number,
         bio: theContact.bio
-    };
-    axios.patch("/api/contacts/" + theContact.id, params).then(response => {
+      };
+      axios.patch("/api/contacts/" + theContact.id, params).then(response => {
       console.log(response);
       theContact = response.data;
       })
     } ,
     deleteContact: function(theContact) {
       axios.delete("/api/contacts/" + theContact.id).then(response => {
+        console.log("Deleting Contact");
         console.log(response);
+        console.log("contact deleted")
         var index = this.contacts.indexOf(theContact);
         this.contacts.splice(index, 1);
       })
